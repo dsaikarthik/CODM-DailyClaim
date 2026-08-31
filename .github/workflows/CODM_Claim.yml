@@ -1,0 +1,51 @@
+name: CODM Daily Claim
+
+on:
+  schedule:
+    - cron: "0 12 * * *" # 12 noon Atlanta/Newark time
+      timezone: "America/New_York"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write      
+
+env:
+  USERNAME: "6810812177185243137"   # your codm id/username
+  REGION: "auto"             # auto mostly works. if it doesn't then manually try entering your region
+
+jobs:
+  claim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Claim
+        id: claim
+        run: |
+          args="--json"
+          if [ "${REGION}" != "auto" ]; then
+            args="${args} --region ${REGION}"
+          fi
+          mkdir -p output
+          ts="$(date +%Y-%m-%d)"
+          set +e
+          python3 codm_claim.py "${USERNAME}" ${args} > "output/claim-${ts}.json" 2> "output/claim-${ts}.log"
+          rc=$?
+          set -e
+          echo "claim_exit_code=${rc}" >> "${GITHUB_OUTPUT}"
+          cat "output/claim-${ts}.json"
+          [ "${rc}" -ne 3 ]
+
+      - name: Commit output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output
+          git diff --cached --quiet || {
+            git commit -m "chore(codm): claim results $(date +%Y-%m-%d)"
+            git push
+          }
+          
