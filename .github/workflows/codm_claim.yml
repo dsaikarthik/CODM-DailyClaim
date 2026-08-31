@@ -10,7 +10,7 @@ permissions:
   contents: write      
 
 env:
-  USERNAME: "6810812177185243137"   # your codm id/username
+  USERNAME: "UID"   # your codm id/username
   REGION: "auto"             # auto mostly works. if it doesn't then manually try entering your region
 
 jobs:
