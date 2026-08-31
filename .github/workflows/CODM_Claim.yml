@@ -10,7 +10,7 @@ permissions:
   contents: write      
 
 env:
-  USERNAME: "6810812177185243137"   # your codm id/username
+  USERNAME: "UID"   # your codm id/username
   REGION: "auto"             # auto mostly works. if it doesn't then manually try entering your region
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
           mkdir -p output
           ts="$(date +%Y-%m-%d)"
           set +e
-          python3 codm_claim.py "${USERNAME}" ${args} > "output/claim-${ts}.json" 2> "output/claim-${ts}.log"
+          python3 CODM_claim.py "${USERNAME}" ${args} > "output/claim-${ts}.json" 2> "output/claim-${ts}.log"
           rc=$?
           set -e
           echo "claim_exit_code=${rc}" >> "${GITHUB_OUTPUT}"
